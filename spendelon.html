@@ -39,6 +39,8 @@
 
     <script>
         let money = 400000000000;  // Set initial money to $400 billion
+        let inventory = {}; // Keeps track of the player's inventory for each item
+
         const items = [
             { name: "Big Mac", price: 2, img: "https://neal.fun/spend/images/big-mac.jpg" },
             { name: "Flip Flops", price: 3, img: "https://neal.fun/spend/images/flip-flops.jpg" },
@@ -80,20 +82,26 @@
         });
         
         function buy(name, price) { 
-            let qty = document.getElementById(`${name.replace(/\s+/g, "-")}-qty`).value;
+            let qty = parseInt(document.getElementById(`${name.replace(/\s+/g, "-")}-qty`).value);
             const totalCost = price * qty;
             if (money >= totalCost) {
-                money -= totalCost; 
-                updateMoney(); 
+                money -= totalCost;
+                inventory[name] = (inventory[name] || 0) + qty; // Add to inventory
+                updateMoney();
             } else {
                 alert("Ohhh, you too spoiled. Now you're broke!");
             }
         }
         
         function sell(name, price) { 
-            let qty = document.getElementById(`${name.replace(/\s+/g, "-")}-qty`).value;
-            money += price * qty; 
-            updateMoney(); 
+            let qty = parseInt(document.getElementById(`${name.replace(/\s+/g, "-")}-qty`).value);
+            if (inventory[name] >= qty) {
+                money += price * qty;
+                inventory[name] -= qty; // Remove from inventory
+                updateMoney();
+            } else {
+                alert("You don't own enough of this item to sell!");
+            }
         }
         
         updateMoney();
