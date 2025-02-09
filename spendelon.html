@@ -5,46 +5,40 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Spend Elon's Money</title>
     <style>
-        body { font-family: Arial, sans-serif; text-align: center; background-color: #f4f4f4; font-size: 24px; margin: 0; padding: 0; }
+        body { font-family: Arial, sans-serif; text-align: center; background-color: #f4f4f4; font-size: 18px; margin: 0; padding: 0; }
         .header { background: #333; color: white; padding: 20px 0; position: fixed; width: 100%; top: 0; z-index: 1000; }
-        .header h1 { margin: 0; }
-        .header h2 { margin: 10px 0; }
-        .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 30px; padding: 100px 20px 20px; }
-        .item { display: flex; flex-direction: column; align-items: center; background: white; padding: 20px; border-radius: 10px; box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1); }
+        .header h1 { margin: 0; font-size: 36px; }
+        .header img { width: 120px; }
+        .header h2 { margin: 10px 0; font-size: 24px; }
+        .header p { font-size: 18px; }
+        .grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 30px; padding: 120px 20px 20px; }
+        .item { display: flex; flex-direction: column; align-items: center; background: white; padding: 20px; border-radius: 10px; box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1); transition: transform 0.3s ease; }
+        .item:hover { transform: translateY(-10px); }
         .item img { width: 200px; height: 200px; object-fit: cover; border-radius: 10px; }
         button { padding: 12px 18px; cursor: pointer; border: none; border-radius: 5px; font-size: 22px; margin-top: 10px; }
         .buy { background: green; color: white; }
         .sell { background: red; color: white; }
         input { font-size: 20px; width: 80px; text-align: center; margin-top: 10px; }
-        .receipt-wrapper { position: relative; margin-top: 50px; padding: 20px; background-color: #fff; border-top: 2px solid #333; }
-        .receipt-paper { max-height: 200px; overflow-y: auto; padding: 20px; border: 1px solid #ccc; background-color: #f9f9f9; box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1); border-radius: 10px; }
-        .receipt-paper h3 { margin-top: 0; }
-        .receipt-paper ul { padding: 0; list-style: none; }
-        .receipt-paper li { margin: 5px 0; }
-        .receipt-footer { text-align: left; font-size: 20px; padding-top: 10px; }
+        .footer { background: #333; color: white; padding: 20px 0; margin-top: 50px; }
+        .footer p { font-size: 18px; }
     </style>
 </head>
 <body>
     <div class="header">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/4/42/OpenAI_Logo_2023.svg/1024px-OpenAI_Logo_2023.svg.png" alt="OpenAI Logo">
         <h1>Spend Elon's Money</h1>
-        <h2>Money: $<span id="money">100000000000</span></h2>
+        <h2>Money: $<span id="money">400000000000</span></h2>
+        <p>Elon Musk's net worth is $400 billion</p>
     </div>
+    
     <div id="items" class="grid"></div>
-    
-    <!-- Receipt Section -->
-    <div class="receipt-wrapper">
-        <div class="receipt-paper">
-            <h3>Receipt</h3>
-            <ul id="receipt-list"></ul>
-        </div>
-        <div class="receipt-footer">
-            Total: $<span id="total-spent">0</span>
-        </div>
+
+    <div class="footer">
+        <p>Made by Viraajn | 2025</p>
     </div>
-    
+
     <script>
-        let money = 100000000000;
-        let totalSpent = 0;
+        let money = 400000000000;  // Set initial money to $400 billion
         const items = [
             { name: "Big Mac", price: 2, img: "https://neal.fun/spend/images/big-mac.jpg" },
             { name: "Flip Flops", price: 3, img: "https://neal.fun/spend/images/flip-flops.jpg" },
@@ -68,22 +62,13 @@
             { name: "Acre of Farmland", price: 3000, img: "https://neal.fun/spend/images/acre-of-farmland.jpg" },
             { name: "Skyscraper", price: 850000000, img: "https://neal.fun/spend/images/skyscraper.jpg" },
             { name: "Cruise Ship", price: 930000000, img: "https://neal.fun/spend/images/cruise-ship.jpg" },
-            { name: "NBA Team", price: 2120000000, img: "https://neal.fun/spend/images/nba-team.jpg" }
+            { name: "NBA Team", price: 2120000000, img: "https://neal.fun/spend/images/nba-team.jpg" },
+            { name: "OpenAI", price: 157000000000, img: "https://upload.wikimedia.org/wikipedia/commons/thumb/4/42/OpenAI_Logo_2023.svg/1024px-OpenAI_Logo_2023.svg.png" } // Added OpenAI as an option
         ];
 
         const container = document.getElementById('items');
-        const receiptList = document.getElementById('receipt-list');
-        const totalSpentEl = document.getElementById('total-spent');
-        const moneyEl = document.getElementById('money');
+        function updateMoney() { document.getElementById('money').innerText = money.toLocaleString(); }
         
-        function updateMoney() { moneyEl.innerText = money.toLocaleString(); }
-
-        function addToReceipt(name, price, qty) {
-            const li = document.createElement('li');
-            li.innerText = `${name} x${qty} - $${(price * qty).toLocaleString()}`;
-            receiptList.appendChild(li);
-        }
-
         items.forEach(item => {
             const div = document.createElement('div');
             div.className = 'item';
@@ -93,30 +78,24 @@
                 `<button class="sell" onclick="sell('${item.name}', ${item.price})">Sell</button>`;
             container.appendChild(div);
         });
-
+        
         function buy(name, price) { 
             let qty = document.getElementById(`${name.replace(/\s+/g, "-")}-qty`).value;
-            qty = parseInt(qty);
-            if (money >= price * qty) {
-                money -= price * qty;
-                totalSpent += price * qty;
-                addToReceipt(name, price, qty);
-                updateMoney();
-                totalSpentEl.innerText = totalSpent.toLocaleString();
+            const totalCost = price * qty;
+            if (money >= totalCost) {
+                money -= totalCost; 
+                updateMoney(); 
             } else {
-                alert('Not enough money!');
+                alert("Ohhh, you too spoiled. Now you're broke!");
             }
         }
-
+        
         function sell(name, price) { 
             let qty = document.getElementById(`${name.replace(/\s+/g, "-")}-qty`).value;
-            qty = parseInt(qty);
-            money += price * qty;
-            totalSpent -= price * qty;
-            updateMoney();
-            totalSpentEl.innerText = totalSpent.toLocaleString();
+            money += price * qty; 
+            updateMoney(); 
         }
-
+        
         updateMoney();
     </script>
 </body>
