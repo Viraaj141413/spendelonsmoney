@@ -1,278 +1,115 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Spend Elon’s Money</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      background-color: #f0f0f0;
-      padding: 20px;
-    }
-    .item {
-      display: inline-block;
-      width: 300px;
-      margin: 20px;
-      padding: 20px;
-      background-color: white;
-      border-radius: 10px;
-      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-      text-align: center;
-    }
-    .item img {
-      max-width: 100%;
-      height: auto;
-      border-radius: 10px;
-    }
-    h1 {
-      font-size: 36px;
-      text-align: center;
-    }
-    h3 {
-      font-size: 24px;
-      margin: 10px 0;
-    }
-    p {
-      font-size: 18px;
-      color: #333;
-    }
-    input[type="number"] {
-      padding: 5px;
-      width: 50px;
-      margin: 10px;
-    }
-    button {
-      padding: 10px 20px;
-      background-color: #007bff;
-      color: white;
-      border: none;
-      border-radius: 5px;
-      cursor: pointer;
-      margin: 5px;
-    }
-    button:hover {
-      background-color: #0056b3;
-    }
-    .balance {
-      font-size: 30px;
-      font-weight: bold;
-      text-align: center;
-      margin-bottom: 20px;
-      color: #333;
-    }
-    #items-container {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: center;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Spend Elon's Money</title>
+    <style>
+        body { font-family: Arial, sans-serif; text-align: center; background-color: #f4f4f4; font-size: 24px; margin: 0; padding: 0; }
+        .header { background: #333; color: white; padding: 20px 0; position: fixed; width: 100%; top: 0; z-index: 1000; }
+        .header h1 { margin: 0; }
+        .header h2 { margin: 10px 0; }
+        .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 30px; padding: 100px 20px 20px; }
+        .item { display: flex; flex-direction: column; align-items: center; background: white; padding: 20px; border-radius: 10px; box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1); }
+        .item img { width: 200px; height: 200px; object-fit: cover; border-radius: 10px; }
+        button { padding: 12px 18px; cursor: pointer; border: none; border-radius: 5px; font-size: 22px; margin-top: 10px; }
+        .buy { background: green; color: white; }
+        .sell { background: red; color: white; }
+        input { font-size: 20px; width: 80px; text-align: center; margin-top: 10px; }
+        .receipt { position: fixed; bottom: 0; width: 100%; background-color: #333; color: white; padding: 20px; text-align: left; font-size: 20px; max-height: 200px; overflow-y: auto; }
+        .receipt h3 { margin: 0; }
+        .receipt ul { padding: 0; list-style: none; }
+        .receipt li { margin: 5px 0; }
+    </style>
 </head>
 <body>
-  <h1>Spend Elon’s Money</h1>
-
-  <!-- Balance Display -->
-  <div class="balance" id="balance-text">
-    Current Balance: $400,000,000,000
-  </div>
-
-  <div id="items-container">
-    <!-- Big Mac -->
-    <div class="item">
-      <img src="https://neal.fun/spend/images/big-mac.jpg" alt="Big Mac">
-      <h3>Big Mac</h3>
-      <p>Price: $2</p>
-      <label for="big-mac-quantity">Quantity:</label>
-      <input type="number" id="big-mac-quantity" name="big-mac-quantity" min="0" max="100">
-      <button onclick="buyItem('big-mac', 2)">Buy</button>
-      <button onclick="sellItem('big-mac', 2)">Sell</button>
+    <div class="header">
+        <h1>Spend Elon's Money</h1>
+        <h2>Money: $<span id="money">100000000000</span></h2>
     </div>
-
-    <!-- Flip Flops -->
-    <div class="item">
-      <img src="https://neal.fun/spend/images/flip-flops.jpg" alt="Flip Flops">
-      <h3>Flip Flops</h3>
-      <p>Price: $3</p>
-      <label for="flip-flops-quantity">Quantity:</label>
-      <input type="number" id="flip-flops-quantity" name="flip-flops-quantity" min="0" max="100">
-      <button onclick="buyItem('flip-flops', 3)">Buy</button>
-      <button onclick="sellItem('flip-flops', 3)">Sell</button>
+    <div id="items" class="grid"></div>
+    <div class="receipt">
+        <h3>Receipt</h3>
+        <ul id="receipt-list"></ul>
+        <div>Total: $<span id="total-spent">0</span></div>
     </div>
+    
+    <script>
+        let money = 100000000000;
+        let totalSpent = 0;
+        const items = [
+            { name: "Big Mac", price: 2, img: "https://neal.fun/spend/images/big-mac.jpg" },
+            { name: "Flip Flops", price: 3, img: "https://neal.fun/spend/images/flip-flops.jpg" },
+            { name: "Coca-Cola Pack", price: 5, img: "https://neal.fun/spend/images/coca-cola-pack.jpg" },
+            { name: "Movie Ticket", price: 12, img: "https://neal.fun/spend/images/movie-ticket.jpg" },
+            { name: "Book", price: 15, img: "https://neal.fun/spend/images/book.jpg" },
+            { name: "Lobster Dinner", price: 45, img: "https://neal.fun/spend/images/lobster-dinner.jpg" },
+            { name: "Video Game", price: 60, img: "https://neal.fun/spend/images/video-game.jpg" },
+            { name: "Amazon Echo", price: 99, img: "https://neal.fun/spend/images/amazon-echo.jpg" },
+            { name: "Year of Netflix", price: 100, img: "https://neal.fun/spend/images/year-of-netflix.jpg" },
+            { name: "Air Jordans", price: 125, img: "https://neal.fun/spend/images/air-jordans.jpg" },
+            { name: "Airpods", price: 199, img: "https://neal.fun/spend/images/airpods.jpg" },
+            { name: "Gaming Console", price: 299, img: "https://neal.fun/spend/images/gaming-console.jpg" },
+            { name: "Drone", price: 350, img: "https://neal.fun/spend/images/drone.jpg" },
+            { name: "Smartphone", price: 699, img: "https://neal.fun/spend/images/smartphone.jpg" },
+            { name: "Bike", price: 800, img: "https://neal.fun/spend/images/bike.jpg" },
+            { name: "Kitten", price: 1500, img: "https://neal.fun/spend/images/kitten.jpg" },
+            { name: "Puppy", price: 1500, img: "https://neal.fun/spend/images/puppy.jpg" },
+            { name: "Auto Rickshaw", price: 2300, img: "https://neal.fun/spend/images/auto-rickshaw.jpg" },
+            { name: "Horse", price: 2500, img: "https://neal.fun/spend/images/horse.jpg" },
+            { name: "Acre of Farmland", price: 3000, img: "https://neal.fun/spend/images/acre-of-farmland.jpg" },
+            { name: "Skyscraper", price: 850000000, img: "https://neal.fun/spend/images/skyscraper.jpg" },
+            { name: "Cruise Ship", price: 930000000, img: "https://neal.fun/spend/images/cruise-ship.jpg" },
+            { name: "NBA Team", price: 2120000000, img: "https://neal.fun/spend/images/nba-team.jpg" }
+        ];
 
-    <!-- Coca-Cola Pack -->
-    <div class="item">
-      <img src="https://neal.fun/spend/images/coca-cola-pack.jpg" alt="Coca-Cola Pack">
-      <h3>Coca-Cola Pack</h3>
-      <p>Price: $5</p>
-      <label for="coca-cola-pack-quantity">Quantity:</label>
-      <input type="number" id="coca-cola-pack-quantity" name="coca-cola-pack-quantity" min="0" max="100">
-      <button onclick="buyItem('coca-cola-pack', 5)">Buy</button>
-      <button onclick="sellItem('coca-cola-pack', 5)">Sell</button>
-    </div>
+        const container = document.getElementById('items');
+        const receiptList = document.getElementById('receipt-list');
+        const totalSpentEl = document.getElementById('total-spent');
+        const moneyEl = document.getElementById('money');
+        
+        function updateMoney() { moneyEl.innerText = money.toLocaleString(); }
 
-    <!-- Movie Ticket -->
-    <div class="item">
-      <img src="https://neal.fun/spend/images/movie-ticket.jpg" alt="Movie Ticket">
-      <h3>Movie Ticket</h3>
-      <p>Price: $12</p>
-      <label for="movie-ticket-quantity">Quantity:</label>
-      <input type="number" id="movie-ticket-quantity" name="movie-ticket-quantity" min="0" max="100">
-      <button onclick="buyItem('movie-ticket', 12)">Buy</button>
-      <button onclick="sellItem('movie-ticket', 12)">Sell</button>
-    </div>
+        function addToReceipt(name, price, qty) {
+            const li = document.createElement('li');
+            li.innerText = `${name} x${qty} - $${(price * qty).toLocaleString()}`;
+            receiptList.appendChild(li);
+        }
 
-    <!-- Book -->
-    <div class="item">
-      <img src="https://neal.fun/spend/images/book.jpg" alt="Book">
-      <h3>Book</h3>
-      <p>Price: $15</p>
-      <label for="book-quantity">Quantity:</label>
-      <input type="number" id="book-quantity" name="book-quantity" min="0" max="100">
-      <button onclick="buyItem('book', 15)">Buy</button>
-      <button onclick="sellItem('book', 15)">Sell</button>
-    </div>
+        items.forEach(item => {
+            const div = document.createElement('div');
+            div.className = 'item';
+            div.innerHTML = `<img src="${item.img}" alt="${item.name}"><span>${item.name} - $${item.price.toLocaleString()}</span>` +
+                `<input type='number' value='1' min='1' id='${item.name.replace(/\s+/g, "-")}-qty'>` +
+                `<button class="buy" onclick="buy('${item.name}', ${item.price})">Buy</button>` +
+                `<button class="sell" onclick="sell('${item.name}', ${item.price})">Sell</button>`;
+            container.appendChild(div);
+        });
 
-    <!-- Lobster Dinner -->
-    <div class="item">
-      <img src="https://neal.fun/spend/images/lobster-dinner.jpg" alt="Lobster Dinner">
-      <h3>Lobster Dinner</h3>
-      <p>Price: $45</p>
-      <label for="lobster-dinner-quantity">Quantity:</label>
-      <input type="number" id="lobster-dinner-quantity" name="lobster-dinner-quantity" min="0" max="100">
-      <button onclick="buyItem('lobster-dinner', 45)">Buy</button>
-      <button onclick="sellItem('lobster-dinner', 45)">Sell</button>
-    </div>
+        function buy(name, price) { 
+            let qty = document.getElementById(`${name.replace(/\s+/g, "-")}-qty`).value;
+            qty = parseInt(qty);
+            if (money >= price * qty) {
+                money -= price * qty;
+                totalSpent += price * qty;
+                addToReceipt(name, price, qty);
+                updateMoney();
+                totalSpentEl.innerText = totalSpent.toLocaleString();
+            } else {
+                alert('Not enough money!');
+            }
+        }
 
-    <!-- Video Game -->
-    <div class="item">
-      <img src="https://neal.fun/spend/images/video-game.jpg" alt="Video Game">
-      <h3>Video Game</h3>
-      <p>Price: $60</p>
-      <label for="video-game-quantity">Quantity:</label>
-      <input type="number" id="video-game-quantity" name="video-game-quantity" min="0" max="100">
-      <button onclick="buyItem('video-game', 60)">Buy</button>
-      <button onclick="sellItem('video-game', 60)">Sell</button>
-    </div>
+        function sell(name, price) { 
+            let qty = document.getElementById(`${name.replace(/\s+/g, "-")}-qty`).value;
+            qty = parseInt(qty);
+            money += price * qty;
+            totalSpent -= price * qty;
+            updateMoney();
+            totalSpentEl.innerText = totalSpent.toLocaleString();
+        }
 
-    <!-- Amazon Echo -->
-    <div class="item">
-      <img src="https://neal.fun/spend/images/amazon-echo.jpg" alt="Amazon Echo">
-      <h3>Amazon Echo</h3>
-      <p>Price: $99</p>
-      <label for="amazon-echo-quantity">Quantity:</label>
-      <input type="number" id="amazon-echo-quantity" name="amazon-echo-quantity" min="0" max="100">
-      <button onclick="buyItem('amazon-echo', 99)">Buy</button>
-      <button onclick="sellItem('amazon-echo', 99)">Sell</button>
-    </div>
-
-    <!-- Year of Netflix -->
-    <div class="item">
-      <img src="https://neal.fun/spend/images/netflix.jpg" alt="Year of Netflix">
-      <h3>Year of Netflix</h3>
-      <p>Price: $100</p>
-      <label for="netflix-quantity">Quantity:</label>
-      <input type="number" id="netflix-quantity" name="netflix-quantity" min="0" max="100">
-      <button onclick="buyItem('netflix', 100)">Buy</button>
-      <button onclick="sellItem('netflix', 100)">Sell</button>
-    </div>
-
-    <!-- Air Jordans -->
-    <div class="item">
-      <img src="https://neal.fun/spend/images/air-jordans.jpg" alt="Air Jordans">
-      <h3>Air Jordans</h3>
-      <p>Price: $125</p>
-      <label for="air-jordans-quantity">Quantity:</label>
-      <input type="number" id="air-jordans-quantity" name="air-jordans-quantity" min="0" max="100">
-      <button onclick="buyItem('air-jordans', 125)">Buy</button>
-      <button onclick="sellItem('air-jordans', 125)">Sell</button>
-    </div>
-
-    <!-- Airpods -->
-    <div class="item">
-      <img src="https://neal.fun/spend/images/airpods.jpg" alt="Airpods">
-      <h3>Airpods</h3>
-      <p>Price: $199</p>
-      <label for="airpods-quantity">Quantity:</label>
-      <input type="number" id="airpods-quantity" name="airpods-quantity" min="0" max="100">
-      <button onclick="buyItem('airpods', 199)">Buy</button>
-      <button onclick="sellItem('airpods', 199)">Sell</button>
-    </div>
-
-    <!-- Tesla Model S -->
-    <div class="item">
-      <img src="https://neal.fun/spend/images/tesla-model-s.jpg" alt="Tesla Model S">
-      <h3>Tesla Model S</h3>
-      <p>Price: $85,000</p>
-      <label for="tesla-model-s-quantity">Quantity:</label>
-      <input type="number" id="tesla-model-s-quantity" name="tesla-model-s-quantity" min="0" max="100">
-      <button onclick="buyItem('tesla-model-s', 85000)">Buy</button>
-      <button onclick="sellItem('tesla-model-s', 85000)">Sell</button>
-    </div>
-
-    <!-- Yacht -->
-    <div class="item">
-      <img src="https://neal.fun/spend/images/yacht.jpg" alt="Yacht">
-      <h3>Yacht</h3>
-      <p>Price: $100,000,000</p>
-      <label for="yacht-quantity">Quantity:</label>
-      <input type="number" id="yacht-quantity" name="yacht-quantity" min="0" max="100">
-      <button onclick="buyItem('yacht', 100000000)">Buy</button>
-      <button onclick="sellItem('yacht', 100000000)">Sell</button>
-    </div>
-
-    <!-- Private Island -->
-    <div class="item">
-      <img src="https://neal.fun/spend/images/private-island.jpg" alt="Private Island">
-      <h3>Private Island</h3>
-      <p>Price: $300,000,000</p>
-      <label for="private-island-quantity">Quantity:</label>
-      <input type="number" id="private-island-quantity" name="private-island-quantity" min="0" max="100">
-      <button onclick="buyItem('private-island', 300000000)">Buy</button>
-      <button onclick="sellItem('private-island', 300000000)">Sell</button>
-    </div>
-
-    <!-- Space Travel -->
-    <div class="item">
-      <img src="https://neal.fun/spend/images/space-travel.jpg" alt="Space Travel">
-      <h3>Space Travel</h3>
-      <p>Price: $250,000,000</p>
-      <label for="space-travel-quantity">Quantity:</label>
-      <input type="number" id="space-travel-quantity" name="space-travel-quantity" min="0" max="100">
-      <button onclick="buyItem('space-travel', 250000000)">Buy</button>
-      <button onclick="sellItem('space-travel', 250000000)">Sell</button>
-    </div>
-
-  </div>
-
-  <script>
-    let balance = 400000000000; // Starting balance
-
-    // Function to update the displayed balance
-    function updateBalance() {
-      document.getElementById('balance-text').textContent = `Current Balance: $${balance.toLocaleString()}`;
-    }
-
-    // Function for buying items
-    function buyItem(item, price) {
-      let quantity = document.getElementById(`${item}-quantity`).value;
-      let totalCost = price * quantity;
-      if (totalCost <= balance) {
-        balance -= totalCost;
-        updateBalance();
-        alert(`You bought ${quantity} ${item}(s) for $${totalCost}`);
-      } else {
-        alert('You don’t have enough money!');
-      }
-    }
-
-    // Function for selling items
-    function sellItem(item, price) {
-      let quantity = document.getElementById(`${item}-quantity`).value;
-      let totalReturn = price * quantity;
-      balance += totalReturn;
-      updateBalance();
-      alert(`You sold ${quantity} ${item}(s) for $${totalReturn}`);
-    }
-  </script>
+        updateMoney();
+    </script>
 </body>
 </html>
