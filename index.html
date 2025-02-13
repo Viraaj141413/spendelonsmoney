@@ -11,16 +11,26 @@
         .header img { width: 120px; }
         .header h2 { margin: 10px 0; font-size: 24px; }
         .header p { font-size: 18px; }
-        .grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 30px; padding: 120px 20px 20px; }
+        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 20px; padding: 120px 20px 20px; }
         .item { display: flex; flex-direction: column; align-items: center; background: white; padding: 20px; border-radius: 10px; box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1); transition: transform 0.3s ease; }
         .item:hover { transform: translateY(-10px); }
         .item img { width: 200px; height: 200px; object-fit: cover; border-radius: 10px; }
-        button { padding: 12px 18px; cursor: pointer; border: none; border-radius: 5px; font-size: 22px; margin-top: 10px; }
+        button { padding: 12px 18px; cursor: pointer; border: none; border-radius: 5px; font-size: 18px; margin-top: 10px; }
         .buy { background: green; color: white; }
         .sell { background: red; color: white; }
         input { font-size: 20px; width: 80px; text-align: center; margin-top: 10px; }
         .footer { background: #333; color: white; padding: 20px 0; margin-top: 50px; }
         .footer p { font-size: 18px; }
+
+        /* Mobile responsiveness */
+        @media (max-width: 600px) {
+            .header h1 { font-size: 28px; }
+            .header h2 { font-size: 20px; }
+            .grid { padding: 100px 10px 20px; }
+            .item { padding: 10px; }
+            .item img { width: 150px; height: 150px; }
+            button { font-size: 16px; }
+        }
     </style>
 </head>
 <body>
@@ -65,7 +75,7 @@
             { name: "Skyscraper", price: 850000000, img: "https://neal.fun/spend/images/skyscraper.jpg" },
             { name: "Cruise Ship", price: 930000000, img: "https://neal.fun/spend/images/cruise-ship.jpg" },
             { name: "NBA Team", price: 2120000000, img: "https://neal.fun/spend/images/nba-team.jpg" },
-            { name: "OpenAI", price: 157000000000, img: "https://upload.wikimedia.org/wikipedia/commons/thumb/4/42/OpenAI_Logo_2023.svg/1024px-OpenAI_Logo_2023.svg.png" } // Added OpenAI as an option
+            { name: "OpenAI", price: 157000000000, img: "https://upload.wikimedia.org/wikipedia/commons/thumb/4/42/OpenAI_Logo_2023.svg/1024px-OpenAI_Logo_2023.svg.png" }
         ];
 
         const container = document.getElementById('items');
